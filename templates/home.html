@@ -1,0 +1,399 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <meta charset="UTF-8">
+    <title>EduTest</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 18px 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 20px;
+            color: #2c3e50;
+        }
+
+        .center-menu {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .center-menu a, .right-menu a {
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .right-menu {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .right-menu a.button {
+            padding: 8px 16px;
+            border-radius: 8px;
+            background-color: #7bed9f;
+            color: black;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .right-menu a.button:hover {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 80vh;
+            padding-left: 50px;
+        }
+
+        
+
+        .welcome-box h1 {
+            margin-bottom: -5px;
+            font-size: 36px;
+            color: #2c3e50;
+            line-height: 1.2;
+            max-width: 400px;
+            padding: 15px 25px;
+            border-radius: 12px;
+            line-height: 1.2;
+        }
+
+        .main-content p {
+            font-size: 15px;
+            color: #767676;
+            margin-bottom: -5px;
+        }
+
+
+        .flag-select {
+            position: relative;
+        }
+
+        .flag-btn {
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .flag-dropdown {
+            display: none;
+            position: absolute;
+            top: 30px;
+            right: 0;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        .flag-dropdown button {
+            display: block;
+            width: 100%;
+            padding: 5px 10px;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .flag-dropdown button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .background-figures {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .circle {
+            background: #66ccff;
+            width: 120px;
+            height: 120px;
+            top: 10%;
+            left: 20%;
+            border-radius: 50%;
+        }
+
+        .square {
+            background: #ff99cc;
+            width: 100px;
+            height: 100px;
+            top: 40%;
+            left: 70%;
+        }
+
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+            border-bottom: 100px solid #99ff99;
+            top: 70%;
+            left: 10%;
+            position: absolute;
+            opacity: 0.3;
+            animation: float 25s infinite ease-in-out;
+        }
+
+        .oval {
+            background: #ffcc66;
+            width: 160px;
+            height: 80px;
+            top: 20%;
+            left: 50%;
+            border-radius: 50% / 25%;
+            transform: rotate(25deg);
+        }
+
+        .blob {
+            background: #cc99ff;
+            width: 140px;
+            height: 140px;
+            top: 60%;
+            left: 35%;
+            border-radius: 50% 30% 50% 30%;
+        }
+
+        .diamond {
+            background: #99cc66;
+            width: 80px;
+            height: 80px;
+            top: 36%;
+            left: 10%;
+            transform: rotate(45deg);
+        }
+
+        .semicircle {
+            width: 100px;
+            height: 50px;
+            background: #ff6666;
+            top: 80%;
+            left: 60%;
+            border-top-left-radius: 100px;
+            border-top-right-radius: 100px;
+        }
+
+        .star {
+            width: 0;
+            height: 0;
+            top: 80%;
+            left: 70%;
+            position: absolute;
+            background: transparent;
+            clip-path: polygon(
+                50% 0%,
+                61% 35%,
+                98% 35%,
+                68% 57%,
+                79% 91%,
+                50% 70%,
+                21% 91%,
+                32% 57%,
+                2% 35%,
+                39% 35%
+            );
+            background-color: #00cccc;
+        }
+
+        .hexagon {
+            width: 100px;
+            height: 55px;
+            background: #ccff99;
+            top: 15%;
+            left: 75%;
+            position: absolute;
+            clip-path: polygon(
+                50% 0%,
+                100% 25%,
+                100% 75%,
+                50% 100%,
+                0% 75%,
+                0% 25%
+            );
+        }
+
+        .wavy {
+            width: 100px;
+            height: 100px;
+            background: repeating-radial-gradient(circle at center, #ffb3b3, #ffb3b3 10px, transparent 10px, transparent 20px);
+            border-radius: 50%;
+            top: 75%;
+            left: 85%;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-20px) scale(1.05);
+            }
+            100% {
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .image-container {
+            max-width: 55%;
+            margin-top: -660px;
+            float: right;
+            margin-right: 100px; /* уменьшает расстояние от правого края */
+        }
+
+        .image-container img {
+            width: 100%;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">EduTest</div>
+        <div class="background-figures">
+            <div class="shape circle"></div>
+            <div class="shape square"></div>
+            <div class="triangle"></div>
+            <div class="shape oval"></div>
+            <div class="shape blob"></div>
+            <div class="shape diamond"></div>
+            <div class="shape semicircle"></div>
+            <div class="star"></div>
+            <div class="hexagon"></div>
+            <div class="shape wavy"></div>
+        </div>
+        
+        <div class="center-menu">
+            <a href="#" data-key="courses">Курстар</a>
+            <a href="#" data-key="tests">Тесттер</a>
+            <a href="#" data-key="results">Нәтижелер</a>
+        </div>
+        
+
+        <div class="right-menu">
+            <a href="{% url 'login' %}" class="button" data-key="login">Кіру</a>
+            <a href="{% url 'register' %}" class="button" data-key="register">Тіркелу</a>
+            <div class="flag-select">
+                <button class="flag-btn" onclick="toggleDropdown()" id="current-flag">🇰🇿</button>
+                <div class="flag-dropdown" id="flag-dropdown">
+                    <button onclick="changeLanguage('kk')">🇰🇿</button>
+                    <button onclick="changeLanguage('ru')">🇷🇺</button>
+                    <button onclick="changeLanguage('en')">🇬🇧</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="welcome-box">
+            <h1 data-key="welcome">Онлайн оқыту платформасына<br>қош келдіңіз!</h1>
+        </div>
+        <p data-key="desc1">- Курстардан өтіңіз</p>
+        <p data-key="desc2">- Тест тапсырып білім деңгейіңізді анықтаңыз</p>
+        <p data-key="desc3">- Жетістіктеріңізді бақылаңыз</p>
+    </div>
+    <div class="image-container">
+        <img src="{% static 'images/laptop-learning.png' %}" alt="фото">
+    </div>
+    <script>
+        const translations = {
+            kk: {
+                courses: "Курстар",
+                tests: "Тесттер",
+                results: "Нәтижелер",
+                login: "Кіру",
+                register: "Тіркелу",
+                welcome: "Онлайн оқыту платформасына\nқош келдіңіз!",
+                desc1: "- Курстардан өтіңіз",
+                desc2: "- Тест тапсырып білім деңгейіңізді анықтаңыз",
+                desc3: "- Жетістіктеріңізді бақылаңыз"
+            },
+            ru: {
+                courses: "Курсы",
+                tests: "Тесты",
+                results: "Результаты",
+                login: "Вход",
+                register: "Регистрация",
+                welcome: "Добро пожаловать на\nонлайн-платформу обучения!",
+                desc1: "- Проходите курсы",
+                desc2: "- Сдавайте тесты и оценивайте знания",
+                desc3: "- Следите за достижениями"
+            },
+            en: {
+                courses: "Courses",
+                tests: "Tests",
+                results: "Results",
+                login: "Login",
+                register: "Sign Up",
+                welcome: "Welcome to the\nonline learning platform!",
+                desc1: "- Take courses",
+                desc2: "- Pass tests to evaluate your knowledge",
+                desc3: "- Track your achievements"
+            }
+        };
+
+        function changeLanguage(lang) {
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (key === 'welcome') {
+                    el.innerHTML = translations[lang][key].replace(/\n/g, '<br>');
+                } else {
+                    el.textContent = translations[lang][key];
+                }
+            });
+
+            const flagMap = { kk: '🇰🇿', ru: '🇷🇺', en: '🇬🇧' };
+            document.getElementById('current-flag').textContent = flagMap[lang];
+            document.getElementById('flag-dropdown').style.display = 'none';
+        }
+
+        function toggleDropdown() {
+            const dropdown = document.getElementById('flag-dropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        document.addEventListener('click', function(event) {
+            const flagDropdown = document.getElementById('flag-dropdown');
+            const currentFlag = document.getElementById('current-flag');
+            if (!flagDropdown.contains(event.target) && !currentFlag.contains(event.target)) {
+                flagDropdown.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <title>EduTest - Кіру</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ffffff, #f4f4f4);
+    }
+    header {
+      background-color: #ffffff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      color: #2c3e50;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .flag-select {
+            position: relative;
+        }
+
+        .flag-btn {
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .flag-dropdown {
+            display: none;
+            position: absolute;
+            top: 30px;
+            right: 0;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        .flag-dropdown button {
+            display: block;
+            width: 100%;
+            padding: 5px 10px;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .flag-dropdown button:hover {
+            background-color: #f0f0f0;
+        }
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 80vh;
+    }
+    .form-box {
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #aaa;
+      max-width: 400px;
+      width: 100%;
+    }
+    .form-box h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+    .form-box input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .form-box button {
+      width: 100%;
+      padding: 10px;
+      background-color: #7bed9f;
+      color: #000000;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .form-box p {
+      text-align: center;
+      margin-top: 15px;
+    }
+    .form-box p a {
+      color: #7bed9f;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body onload="loadLanguage()">
+  <header>
+    <div>EduTest</div>
+    <div class="flag-select">
+      <button class="flag-btn" onclick="toggleDropdown()" id="current-flag">🇰🇿</button>
+      <div class="flag-dropdown" id="flag-dropdown">
+          <button onclick="changeLanguage('kk')">🇰🇿</button>
+          <button onclick="changeLanguage('ru')">🇷🇺</button>
+          <button onclick="changeLanguage('en')">🇬🇧</button>
+      </div>
+  </div>
+  </header>
+
+  <div class="container">
+    <div class="form-box">
+      <h2 data-key="login_title">Кіру</h2>
+      <form method="post">
+        {% csrf_token %}
+        <input type="email" name="email" id="emailInput" placeholder="Email" required>
+        <input type="password" name="password" id="passwordInput" placeholder="Құпиясөз" required>
+        <button type="submit" data-key="login_btn">Кіру</button>
+      </form>
+      <p><span data-key="no_account">Аккаунтыңыз жоқ па?</span> <a href="{% url 'register' %}" data-key="register_link">Тіркеліңіз</a></p>
+    </div>
+  </div>
+
+  <script>
+    const translations = {
+      kk: {
+        login_title: "Кіру",
+        login_btn: "Кіру",
+        no_account: "Аккаунтыңыз жоқ па?",
+        register_link: "Тіркеліңіз",
+        email_placeholder: "Email",
+        password_placeholder: "Құпиясөз"
+      },
+      ru: {
+        login_title: "Вход",
+        login_btn: "Войти",
+        no_account: "Нет аккаунта?",
+        register_link: "Зарегистрируйтесь",
+        email_placeholder: "Email",
+        password_placeholder: "Пароль"
+      },
+      en: {
+        login_title: "Login",
+        login_btn: "Login",
+        no_account: "Don't have an account?",
+        register_link: "Register",
+        email_placeholder: "Email",
+        password_placeholder: "Password"
+      }
+    };
+
+    function changeLanguage(lang) {
+        localStorage.setItem('lang', lang);
+        applyTranslations(lang);
+
+        const flagMap = { kk: '🇰🇿', ru: '🇷🇺', en: '🇬🇧' };
+        document.getElementById('current-flag').textContent = flagMap[lang];
+        document.getElementById('flag-dropdown').style.display = 'none';
+    }
+
+    function applyTranslations(lang) {
+        // data-key элементтерді жаңарту
+        document.querySelectorAll('[data-key]').forEach(el => {
+            const key = el.getAttribute('data-key');
+            if (key === 'welcome') {
+                el.innerHTML = translations[lang][key].replace(/\n/g, '<br>');
+            } else {
+                el.textContent = translations[lang][key];
+            }
+        });
+
+        // placeholder-лар үшін
+        if (document.getElementById('emailInput')) {
+            document.getElementById('emailInput').placeholder = translations[lang].email_placeholder;
+        }
+        if (document.getElementById('passwordInput')) {
+            document.getElementById('passwordInput').placeholder = translations[lang].password_placeholder;
+        }
+    }
+
+    function toggleDropdown() {
+        const dropdown = document.getElementById('flag-dropdown');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    document.addEventListener('click', function(event) {
+        const flagDropdown = document.getElementById('flag-dropdown');
+        const currentFlag = document.getElementById('current-flag');
+        if (!flagDropdown.contains(event.target) && !currentFlag.contains(event.target)) {
+            flagDropdown.style.display = 'none';
+        }
+    });
+
+    // Бетті жүктеген кезде тіл жүктеу
+    window.onload = function () {
+        const lang = localStorage.getItem('lang') || 'kk';
+        applyTranslations(lang);
+        const flagMap = { kk: '🇰🇿', ru: '🇷🇺', en: '🇬🇧' };
+        if (document.getElementById('current-flag')) {
+            document.getElementById('current-flag').textContent = flagMap[lang];
+        }
+    }
+    
+  </script>
+</body>
+</html>

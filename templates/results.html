@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <title>📊 Нәтижелер</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .result-card {
+      background: white;
+      padding: 20px;
+      margin: 15px auto;
+      max-width: 600px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .result-card p {
+      margin: 5px 0;
+    }
+    .back-btn {
+      position: fixed;
+      top: 40px;
+      right: 40px;
+      background-color: #7bed9f;
+      color: black;
+      padding: 8px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      transition: background-color 0.2s ease;
+      z-index: 1000;
+    }
+    .back-btn:hover {
+      background-color: #2ecc71;
+      color: white;
+    }
+    #languageSelect {
+      position: fixed;
+      top: 40px;
+      left: 40px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      background-color: #e0f7fa;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
+    .background-figures {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .circle {
+            background: #66ccff;
+            width: 120px;
+            height: 120px;
+            top: 10%;
+            left: 20%;
+            border-radius: 50%;
+        }
+
+        .square {
+            background: #ff99cc;
+            width: 100px;
+            height: 100px;
+            top: 40%;
+            left: 70%;
+        }
+
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+            border-bottom: 100px solid #99ff99;
+            top: 70%;
+            left: 10%;
+            position: absolute;
+            opacity: 0.3;
+            animation: float 25s infinite ease-in-out;
+        }
+
+        .oval {
+            background: #ffcc66;
+            width: 160px;
+            height: 80px;
+            top: 20%;
+            left: 50%;
+            border-radius: 50% / 25%;
+            transform: rotate(25deg);
+        }
+
+        .blob {
+            background: #cc99ff;
+            width: 140px;
+            height: 140px;
+            top: 60%;
+            left: 35%;
+            border-radius: 50% 30% 50% 30%;
+        }
+
+        .diamond {
+            background: #99cc66;
+            width: 80px;
+            height: 80px;
+            top: 36%;
+            left: 10%;
+            transform: rotate(45deg);
+        }
+
+        .semicircle {
+            width: 100px;
+            height: 50px;
+            background: #ff6666;
+            top: 80%;
+            left: 60%;
+            border-top-left-radius: 100px;
+            border-top-right-radius: 100px;
+        }
+
+        .star {
+            width: 0;
+            height: 0;
+            top: 80%;
+            left: 70%;
+            position: absolute;
+            background: transparent;
+            clip-path: polygon(
+                50% 0%,
+                61% 35%,
+                98% 35%,
+                68% 57%,
+                79% 91%,
+                50% 70%,
+                21% 91%,
+                32% 57%,
+                2% 35%,
+                39% 35%
+            );
+            background-color: #00cccc;
+        }
+
+        .hexagon {
+            width: 100px;
+            height: 55px;
+            background: #ccff99;
+            top: 15%;
+            left: 75%;
+            position: absolute;
+            clip-path: polygon(
+                50% 0%,
+                100% 25%,
+                100% 75%,
+                50% 100%,
+                0% 75%,
+                0% 25%
+            );
+        }
+
+        .wavy {
+            width: 100px;
+            height: 100px;
+            background: repeating-radial-gradient(circle at center, #ffb3b3, #ffb3b3 10px, transparent 10px, transparent 20px);
+            border-radius: 50%;
+            top: 75%;
+            left: 85%;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-20px) scale(1.05);
+            }
+            100% {
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .image-container {
+            max-width: 55%;
+            margin-top: -660px;
+            float: right;
+            margin-right: 100px; /* уменьшает расстояние от правого края */
+        }
+
+        .image-container img {
+            width: 100%;
+        }
+  </style>
+</head>
+<body>
+
+  <a href="/base/" class="back-btn" id="homeBtn">🔙 Басты бетке</a>
+  <select id="languageSelect">
+    <option value="kk">Қазақша</option>
+    <option value="ru">Русский</option>
+    <option value="en">English</option>
+  </select>
+
+  <h1 id="pageTitle">📊 Тест нәтижелері</h1>
+  <div id="resultsContainer">Жүктелуде...</div>
+  <div class="background-figures">
+    <div class="shape circle"></div>
+    <div class="shape square"></div>
+    <div class="triangle"></div>
+    <div class="shape oval"></div>
+    <div class="shape blob"></div>
+    <div class="shape diamond"></div>
+    <div class="shape semicircle"></div>
+    <div class="star"></div>
+    <div class="hexagon"></div>
+    <div class="shape wavy"></div>
+</div>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAClsdr7MwNndWFc7_L-BlZRNLeMjsxxxQ",
+      authDomain: "edication-ce7a0.firebaseapp.com",
+      projectId: "edication-ce7a0",
+      storageBucket: "edication-ce7a0.appspot.com",
+      messagingSenderId: "336523450386",
+      appId: "1:336523450386:web:c63104c263520f594c60cb"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    const texts = {
+      kk: {
+        title: "📊 Тест нәтижелері",
+        loading: "Жүктелуде...",
+        loginRequired: "Кіру қажет.",
+        notFound: "Нәтиже табылмады.",
+        error: "Қате орын алды. Қайта көріңіз.",
+        testTitle: "📘 Тест атауы:",
+        user: "📧 Қатысушы:",
+        result: "✅ Нәтиже:",
+        time: "🕒 Уақыты:",
+        home: "🔙 Басты бетке"
+      },
+      ru: {
+        title: "📊 Результаты тестов",
+        loading: "Загрузка...",
+        loginRequired: "Требуется вход.",
+        notFound: "Результаты не найдены.",
+        error: "Произошла ошибка. Попробуйте снова.",
+        testTitle: "📘 Название теста:",
+        user: "📧 Участник:",
+        result: "✅ Результат:",
+        time: "🕒 Время:",
+        home: "🔙 На главную"
+      },
+      en: {
+        title: "📊 Test Results",
+        loading: "Loading...",
+        loginRequired: "Login required.",
+        notFound: "No results found.",
+        error: "An error occurred. Please try again.",
+        testTitle: "📘 Test Title:",
+        user: "📧 User:",
+        result: "✅ Result:",
+        time: "🕒 Time:",
+        home: "🔙 Home"
+      }
+    };
+
+    let currentLang = localStorage.getItem("lang") || "kk";
+    const langSelect = document.getElementById("languageSelect");
+    langSelect.value = currentLang;
+
+    function applyLanguage() {
+      const t = texts[currentLang];
+      document.getElementById("pageTitle").textContent = t.title;
+      document.getElementById("resultsContainer").textContent = t.loading;
+      document.getElementById("homeBtn").textContent = t.home;
+    }
+
+    langSelect.addEventListener("change", () => {
+      currentLang = langSelect.value;
+      localStorage.setItem("lang", currentLang);
+      applyLanguage();
+      loadResults();
+    });
+
+    applyLanguage();
+
+    async function loadResults() {
+      const resultsContainer = document.getElementById("resultsContainer");
+      const t = texts[currentLang];
+
+      const userEmail = localStorage.getItem("userEmail");
+      const userRole = localStorage.getItem("userRole");
+
+      if (!userEmail || !userRole) {
+        resultsContainer.innerHTML = `<p>${t.loginRequired}</p>`;
+        return;
+      }
+
+      try {
+        let query;
+        if (userRole === "teacher") {
+          query = db.collection("results");
+        } else {
+          query = db.collection("results").where("userEmail", "==", userEmail);
+        }
+
+        const snapshot = await query.get();
+
+        if (snapshot.empty) {
+          resultsContainer.innerHTML = `<p>${t.notFound}</p>`;
+          return;
+        }
+
+        resultsContainer.innerHTML = "";
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const div = document.createElement("div");
+          div.className = "result-card";
+          div.innerHTML = `
+            <p><strong>${t.testTitle}</strong> ${data.testTitle}</p>
+            <p><strong>${t.user}</strong> ${data.userEmail}</p>
+            <p><strong>${t.result}</strong> ${data.correctCount}/${data.total}</p>
+            <p><strong>${t.time}</strong> ${new Date(data.timestamp).toLocaleString()}</p>
+          `;
+          resultsContainer.appendChild(div);
+        });
+
+      } catch (error) {
+        console.error("Қате:", error);
+        resultsContainer.innerHTML = `<p>${t.error}</p>`;
+      }
+    }
+
+    loadResults();
+  </script>
+</body>
+</html>

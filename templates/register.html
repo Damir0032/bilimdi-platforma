@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <title>EduTest - Тіркелу</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ffffff, #f4f4f4);
+    }
+
+    header {
+      background-color: #ffffff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      color: #2c3e50;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .flag-select {
+      position: relative;
+    }
+
+    .flag-btn {
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    .flag-dropdown {
+      display: none;
+      position: absolute;
+      top: 30px;
+      right: 0;
+      background-color: white;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      z-index: 10;
+    }
+
+    .flag-dropdown button {
+      display: block;
+      width: 100%;
+      padding: 5px 10px;
+      background: none;
+      border: none;
+      text-align: left;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .flag-dropdown button:hover {
+      background-color: #f0f0f0;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 80vh;
+    }
+
+    .form-box {
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #aaa;
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .form-box h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+
+    .form-box input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    .form-box button {
+      width: 100%;
+      padding: 10px;
+      background-color: #7bed9f;
+      color: #000000;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .form-box p {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .form-box p a {
+      color: #7bed9f;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+
+  <!-- Firebase SDK-лары -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+</head>
+
+<body onload="loadLanguage()">
+
+  <header>
+    <div>EduTest</div>
+    <div class="flag-select">
+      <button class="flag-btn" onclick="toggleDropdown()" id="current-flag">🇰🇿</button>
+      <div class="flag-dropdown" id="flag-dropdown">
+        <button onclick="changeLanguage('kk')">🇰🇿</button>
+        <button onclick="changeLanguage('ru')">🇷🇺</button>
+        <button onclick="changeLanguage('en')">🇬🇧</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="form-box">
+      <h2 data-key="register_title">Тіркелу</h2>
+      <form id="registerForm" method="post">
+        {% csrf_token %}
+        <input type="text" name="name" id="nameInput" placeholder="Аты-жөні" required />
+        <input type="email" name="email" id="emailInput" placeholder="Email" required />
+        <input type="password" name="password" id="passwordInput" placeholder="Құпиясөз" required />
+        <input type="text" name="city" id="cityInput" placeholder="Қала" required />
+        <button type="submit" data-key="register_btn">Тіркелу</button>
+      </form>
+      <p>
+        <span data-key="have_account">Аккаунтыңыз бар ма?</span>
+        <a href="{% url 'login' %}" data-key="login_link">Кіру</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // --- Тіл аудармалары ---
+    const translations = {
+      kk: {
+        register_title: "Тіркелу",
+        register_btn: "Тіркелу",
+        have_account: "Аккаунтыңыз бар ма?",
+        login_link: "Кіру",
+        name_placeholder: "Аты-жөні",
+        email_placeholder: "Email",
+        password_placeholder: "Құпиясөз",
+        city_placeholder: "Қала"
+      },
+      ru: {
+        register_title: "Регистрация",
+        register_btn: "Зарегистрироваться",
+        have_account: "Уже есть аккаунт?",
+        login_link: "Войти",
+        name_placeholder: "ФИО",
+        email_placeholder: "Email",
+        password_placeholder: "Пароль",
+        city_placeholder: "Город"
+      },
+      en: {
+        register_title: "Register",
+        register_btn: "Register",
+        have_account: "Already have an account?",
+        login_link: "Login",
+        name_placeholder: "Full Name",
+        email_placeholder: "Email",
+        password_placeholder: "Password",
+        city_placeholder: "City"
+      }
+    };
+
+    function changeLanguage(lang) {
+      localStorage.setItem("lang", lang);
+      applyTranslations(lang);
+      const flagMap = { kk: '🇰🇿', ru: '🇷🇺', en: '🇬🇧' };
+      document.getElementById('current-flag').textContent = flagMap[lang];
+      document.getElementById('flag-dropdown').style.display = 'none';
+    }
+
+    function toggleDropdown() {
+      const dropdown = document.getElementById('flag-dropdown');
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    document.addEventListener('click', function(event) {
+      const flagDropdown = document.getElementById('flag-dropdown');
+      const currentFlag = document.getElementById('current-flag');
+      if (!flagDropdown.contains(event.target) && !currentFlag.contains(event.target)) {
+        flagDropdown.style.display = 'none';
+      }
+    });
+
+    function applyTranslations(lang) {
+      document.querySelectorAll("[data-key]").forEach(el => {
+        const key = el.getAttribute("data-key");
+        el.textContent = translations[lang][key];
+      });
+
+      document.getElementById("nameInput").placeholder = translations[lang].name_placeholder;
+      document.getElementById("emailInput").placeholder = translations[lang].email_placeholder;
+      document.getElementById("passwordInput").placeholder = translations[lang].password_placeholder;
+      document.getElementById("cityInput").placeholder = translations[lang].city_placeholder;
+    }
+
+    function loadLanguage() {
+      const lang = localStorage.getItem("lang") || "kk";
+      applyTranslations(lang);
+      const flagMap = { kk: '🇰🇿', ru: '🇷🇺', en: '🇬🇧' };
+      document.getElementById("current-flag").textContent = flagMap[lang];
+    }
+
+    // --- Firebase конфигурациясы ---
+    const firebaseConfig = {
+      'apiKey': "AIzaSyAClsdr7MwNndWFc7_L-BlZRNLeMjsxxxQ",
+  'databaseURL': "https://bilimdi-platform.firebaseio.com",
+  'authDomain': "edication-ce7a0.firebaseapp.com",
+  'projectId': "edication-ce7a0",
+  'storageBucket': "edication-ce7a0.firebasestorage.app",
+  'messagingSenderId': "336523450386",
+  'appId': "1:336523450386:web:c63104c263520f594c60cb",
+  'measurementId': "G-GLKBYPXMPC"
+    };
+
+    // Firebase инициализациясы
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // --- Тіркелу формасын өңдеу ---
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      e.preventDefault(); // форма жіберуді тоқтату
+
+      const name = document.getElementById('nameInput').value.trim();
+      const email = document.getElementById('emailInput').value.trim();
+      const password = document.getElementById('passwordInput').value;
+      const city = document.getElementById('cityInput').value.trim();
+
+      if (!name || !email || !password || !city) {
+        alert("Барлық өрістерді толтырыңыз.");
+        return;
+      }
+
+      // Firebase Authentication арқылы қолданушыны тіркеу
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          const user = userCredential.user;
+
+          // Қолданушы мәліметтерін Firestore-ға сақтау
+          return db.collection('users').doc(user.uid).set({
+            uid: user.uid,
+            name: name,
+            email: email,
+            city: city,
+            role: "student", // Әдепкі рөл
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        })
+        .then(() => {
+          alert("Тіркелу сәтті өтті!");
+          // Профиль бетіне бағыттау
+          window.location.href = "/login"; // немесе өз жолыңызға ауыстырыңыз
+        })
+        .catch(error => {
+          alert("Қате: " + error.message);
+        });
+    }); 
+  </script>
+</body>
+</html>
+

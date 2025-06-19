@@ -1,0 +1,71 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-20 15:51+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+#: templates/base.html:10 templates/home.html:4
+
+#: templates/base.html:13
+msgid "Шығу"
+msgstr "Шығу"
+
+#: templates/base.html:15 templates/registration/login.html:4
+#: templates/registration/login.html:7 templates/registration/login.html:14
+#: templates/registration/register.html:25
+
+
+#: templates/base.html:16 templates/registration/login.html:17
+#: templates/registration/register.html:4
+#: templates/registration/register.html:22
+msgid "Басты бет"
+msgstr "Басты бет"
+
+msgid "Онлайн оқыту және тестілеу платформасына қош келдіңіз!"
+msgstr "Онлайн оқыту және тестілеу платформасына қош келдіңіз!"
+
+msgid "Бұл платформада курстарды оқып, тест тапсырып, нәтижелерді көре аласыз."
+msgstr "Бұл платформада курстарды оқып, тест тапсырып, нәтижелерді көре аласыз."
+
+msgid "Кіру"
+msgstr "Кіру"
+
+msgid "Тіркелу"
+msgstr "Тіркелу"
+
+msgid "Email немесе логин"
+msgstr "Email немесе логин"
+
+msgid "Құпиясөз"
+msgstr "Құпиясөз"
+
+msgid "Аккаунтыңыз жоқ па?"
+msgstr "Аккаунтыңыз жоқ па?"
+
+msgid "Жаңа қолданушы тіркеу"
+msgstr "Жаңа қолданушы тіркеу"
+
+msgid "Қолданушы аты"
+msgstr "Қолданушы аты"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Құпиясөзді қайталаңыз"
+msgstr "Құпиясөзді қайталаңыз"
+
+msgid "Аккаунтыңыз бар ма?"
+msgstr "Аккаунтыңыз бар ма?"

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <title>📘 Тесттер</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f3f3f3; padding: 20px; }
+    h1 { text-align: center; color: #333; }
+    form, .question-block, .test-card { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input[type="text"] { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; }
+    .options { margin-top: 10px; }
+    .options input[type="text"] { width: 90%; display: inline-block; margin-right: 10px; }
+    .correct-answer { margin-top: 5px; }
+    .add-btn, .submit-btn { display: block; width: 100%; padding: 10px; margin-top: 20px; background: #7bed9f; color: black; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; }
+    .add-btn:hover, .submit-btn:hover { background: #2ecc71; color: white;}
+    .test-card { cursor: pointer; transition: transform 0.2s; }
+    .test-card:hover { transform: scale(1.02); background-color: #e3f2fd; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
+    .modal-content { background: white; padding: 20px; border-radius: 10px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; }
+    .close-btn { float: right; cursor: pointer; color: red; font-weight: bold; }
+    .back-btn {
+  position: fixed;
+  top: 40px;
+  right: 40px;
+  background-color: #7bed9f;
+  color: black;
+  padding: 8px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: background-color 0.2s ease;
+  z-index: 1000;
+}
+.back-btn:hover {
+  background-color: #2ecc71;
+  color: white;
+}
+.background-figures {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .circle {
+            background: #66ccff;
+            width: 120px;
+            height: 120px;
+            top: 10%;
+            left: 20%;
+            border-radius: 50%;
+        }
+
+        .square {
+            background: #ff99cc;
+            width: 100px;
+            height: 100px;
+            top: 40%;
+            left: 70%;
+        }
+
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+            border-bottom: 100px solid #99ff99;
+            top: 70%;
+            left: 10%;
+            position: absolute;
+            opacity: 0.3;
+            animation: float 25s infinite ease-in-out;
+        }
+
+        .oval {
+            background: #ffcc66;
+            width: 160px;
+            height: 80px;
+            top: 20%;
+            left: 50%;
+            border-radius: 50% / 25%;
+            transform: rotate(25deg);
+        }
+
+        .blob {
+            background: #cc99ff;
+            width: 140px;
+            height: 140px;
+            top: 60%;
+            left: 35%;
+            border-radius: 50% 30% 50% 30%;
+        }
+
+        .diamond {
+            background: #99cc66;
+            width: 80px;
+            height: 80px;
+            top: 36%;
+            left: 10%;
+            transform: rotate(45deg);
+        }
+
+        .semicircle {
+            width: 100px;
+            height: 50px;
+            background: #ff6666;
+            top: 80%;
+            left: 60%;
+            border-top-left-radius: 100px;
+            border-top-right-radius: 100px;
+        }
+
+        .star {
+            width: 0;
+            height: 0;
+            top: 80%;
+            left: 70%;
+            position: absolute;
+            background: transparent;
+            clip-path: polygon(
+                50% 0%,
+                61% 35%,
+                98% 35%,
+                68% 57%,
+                79% 91%,
+                50% 70%,
+                21% 91%,
+                32% 57%,
+                2% 35%,
+                39% 35%
+            );
+            background-color: #00cccc;
+        }
+
+        .hexagon {
+            width: 100px;
+            height: 55px;
+            background: #ccff99;
+            top: 15%;
+            left: 75%;
+            position: absolute;
+            clip-path: polygon(
+                50% 0%,
+                100% 25%,
+                100% 75%,
+                50% 100%,
+                0% 75%,
+                0% 25%
+            );
+        }
+
+        .wavy {
+            width: 100px;
+            height: 100px;
+            background: repeating-radial-gradient(circle at center, #ffb3b3, #ffb3b3 10px, transparent 10px, transparent 20px);
+            border-radius: 50%;
+            top: 75%;
+            left: 85%;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-20px) scale(1.05);
+            }
+            100% {
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .image-container {
+            max-width: 55%;
+            margin-top: -660px;
+            float: right;
+            margin-right: 100px; /* уменьшает расстояние от правого края */
+        }
+
+        .image-container img {
+            width: 100%;
+        }
+  </style>
+</head>
+<body>
+  <select id="languageSelect" style="position: fixed; top: 40px; left: 40px; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 15px; background-color: #e0f7fa; border: 1px solid #ccc; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 1000;">
+    <option value="kk">Қазақша</option>
+    <option value="ru">Русский</option>
+    <option value="en">English</option>
+  </select>
+  
+  <a href="/base/" class="back-btn" id="homeBtn">🔙 Басты бетке</a>
+  <h1 id="formTitle" style="display: none;">📋 Тесттер</h1>
+  <form id="testForm" style="display: none;">
+    <label for="testTitle">Тест атауы:</label>
+    <input type="text" id="testTitle" required>
+    <div id="questionsContainer"></div>
+    <button type="button" class="add-btn" onclick="addQuestion()">➕ Сұрақ қосу</button>
+    <button type="submit" class="submit-btn">📤 Сақтау</button>
+  </form> 
+  <div class="background-figures">
+    <div class="shape circle"></div>
+    <div class="shape square"></div>
+    <div class="triangle"></div>
+    <div class="shape oval"></div>
+    <div class="shape blob"></div>
+    <div class="shape diamond"></div>
+    <div class="shape semicircle"></div>
+    <div class="star"></div>
+    <div class="hexagon"></div>
+    <div class="shape wavy"></div>
+</div>
+  <div id="testList"></div>
+  <h1 id="formTitle" style="display: none;">📋 Тесттер</h1>
+  <div class="modal" id="testModal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAClsdr7MwNndWFc7_L-BlZRNLeMjsxxxQ",
+      authDomain: "edication-ce7a0.firebaseapp.com",
+      projectId: "edication-ce7a0",
+      storageBucket: "edication-ce7a0.appspot.com",
+      messagingSenderId: "336523450386",
+      appId: "1:336523450386:web:c63104c263520f594c60cb",
+      measurementId: "G-GLKBYPXMPC"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    let questionCount = 0;
+    
+    const texts = {
+  kk: {
+    title: "📋 Тесттер",
+    testName: "Тест атауы:",
+    addQuestion: "➕ Сұрақ қосу",
+    submit: "📤 Сақтау",
+    answerLabel: "Жауаптар:",
+    correctIndex: "Дұрыс жауап индексі (0-3):",
+    resultMessage: "✅ Тест сәтті аяқталды! Нәтижені «Нәтижелер» бөлімінен қарай аласыз.",
+    repeatMessage: "Сіз бұл тестті бұрын тапсырдыңыз. Нәтижені көру үшін бағытталасыз.",
+    loginRequired: "Кіру қажет",
+    home: "🔙 Басты бетке"
+  },
+  ru: {
+    title: "📋 Тесты",
+    testName: "Название теста:",
+    addQuestion: "➕ Добавить вопрос",
+    submit: "📤 Сохранить",
+    answerLabel: "Ответы:",
+    correctIndex: "Индекс правильного ответа (0-3):",
+    resultMessage: "✅ Тест успешно завершен! Результаты смотрите в разделе «Результаты».",
+    repeatMessage: "Вы уже проходили этот тест. Сейчас произойдёт переход к результату.",
+    loginRequired: "Требуется вход",
+    home: "🔙 На главную"
+  },
+  en: {
+    title: "📋 Tests",
+    testName: "Test Title:",
+    addQuestion: "➕ Add Question",
+    submit: "📤 Save",
+    answerLabel: "Answers:",
+    correctIndex: "Correct answer index (0-3):",
+    resultMessage: "✅ Test completed successfully! You can view your result in the 'Results' section.",
+    repeatMessage: "You have already taken this test. Redirecting to result.",
+    loginRequired: "Login required",
+    home: "🔙 Home"
+  }
+};
+
+let currentLang = localStorage.getItem('lang') || 'kk';
+
+
+function addQuestion() {
+  if (questionCount >= 20) return;
+  const t = texts[currentLang];
+
+  const container = document.getElementById("questionsContainer");
+
+  const block = document.createElement("div");
+  block.className = "question-block";
+  block.innerHTML = `
+    <label>${t.title} ${questionCount + 1}:</label>
+    <input type="text" name="question" required>
+    <div class="options">
+      <label>${t.answerLabel}</label>
+      <input type="text" name="option0" placeholder="Option 1" required><br>
+      <input type="text" name="option1" placeholder="Option 2" required><br>
+      <input type="text" name="option2" placeholder="Option 3" required><br>
+      <input type="text" name="option3" placeholder="Option 4" required>
+    </div>
+    <div class="correct-answer">
+      <label>${t.correctIndex}</label>
+      <input type="text" name="correct" required>
+    </div>
+  `;
+  container.appendChild(block);
+  questionCount++;
+}
+
+
+    document.getElementById("testForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById("testTitle").value;
+      const questions = [];
+      const blocks = document.querySelectorAll(".question-block");
+
+      blocks.forEach(block => {
+        const question = block.querySelector("input[name='question']").value;
+        const options = [
+          block.querySelector("input[name='option0']").value,
+          block.querySelector("input[name='option1']").value,
+          block.querySelector("input[name='option2']").value,
+          block.querySelector("input[name='option3']").value
+        ];
+        const correct = parseInt(block.querySelector("input[name='correct']").value);
+        questions.push({ question, options, correct });
+      });
+
+      try {
+        await db.collection("tests").add({ title, questions });
+        alert("Тест сәтті сақталды!");
+        document.getElementById("testForm").reset();
+        document.getElementById("questionsContainer").innerHTML = "";
+        questionCount = 0;
+        loadTests();
+      } catch (err) {
+        console.error("Қате: ", err);
+        alert("Сақтау кезінде қате болды");
+      }
+    });
+
+    async function loadTests() {
+      const testList = document.getElementById("testList");
+      testList.innerHTML = "";
+      try {
+        const snapshot = await db.collection("tests").get();
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const card = document.createElement("div");
+          card.className = "test-card";
+          card.innerHTML = `<strong>${data.title}</strong>`;
+          card.onclick = () => openTestModal(data);
+          testList.appendChild(card);
+        });
+      } catch (e) {
+        console.error("Тесттерді жүктеу қатесі:", e);
+      }
+    }
+
+    async function openTestModal(test) {
+      const modal = document.getElementById("testModal");
+      const content = document.getElementById("modalContent");
+
+      const userEmail = localStorage.getItem("userEmail") || prompt("Email енгізіңіз:");
+      localStorage.setItem("userEmail", userEmail);
+
+      const resultSnapshot = await db.collection("results")
+        .where("testTitle", "==", test.title)
+        .where("userEmail", "==", userEmail)
+        .get();
+
+      if (!resultSnapshot.empty) {
+        alert(texts[currentLang].repeatMessage);
+        window.location.href = "/results/?email=" + encodeURIComponent(userEmail) + "&test=" + encodeURIComponent(test.title);
+        return;
+      }
+
+      content.innerHTML = `<h3>${test.title}</h3>`;
+      test.questions.forEach((q, i) => {
+        const qBlock = document.createElement("div");
+        qBlock.innerHTML = `<p><strong>${i + 1}. ${q.question}</strong></p>`;
+        q.options.forEach((opt, idx) => {
+          qBlock.innerHTML += `<label><input type="radio" name="q${i}" value="${idx}"> ${opt}</label><br>`;
+        });
+        content.appendChild(qBlock);
+      });
+
+      const submitBtn = document.createElement("button");
+      submitBtn.textContent = "✅ Жауап беру";
+      submitBtn.onclick = () => submitAnswers(test, userEmail);
+      content.appendChild(submitBtn);
+
+      modal.style.display = "flex";
+    }
+
+    function submitAnswers(test, userEmail) {
+      let correctCount = 0;
+      const answers = [];
+
+      test.questions.forEach((q, i) => {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        const answer = selected ? parseInt(selected.value) : -1;
+        if (answer === q.correct) correctCount++;
+        answers.push({ question: q.question, selected: answer, correct: q.correct, options: q.options });
+      });
+
+      const score = {
+        testTitle: test.title,
+        userEmail,
+        correctCount,
+        total: test.questions.length,
+        answers,
+        timestamp: new Date().toISOString()
+      };
+
+      db.collection("results").add(score).then(() => {
+        closeModal();
+        alert(texts[currentLang].loginRequired);
+
+      });
+    }
+
+    function closeModal() {
+      document.getElementById("testModal").style.display = "none";
+    }
+
+    // ✅ Рөлді тексеру
+    auth.onAuthStateChanged(async function(user) {
+  if (user) {
+    const uid = user.uid;
+    const email = user.email;
+    localStorage.setItem("userEmail", email);
+
+    try {
+      const doc = await db.collection("users").doc(uid).get();  // email орнына uid
+      if (doc.exists) {
+        const role = doc.data().role;
+        localStorage.setItem("userRole", role);
+
+        if (role === "teacher") {
+          document.getElementById("testForm").style.display = "block";
+          document.getElementById("formTitle").style.display = "block";
+        }
+      }
+    } catch (e) {
+      console.error("Рөл алу қатесі:", e);
+    }
+
+    loadTests();
+  } else {
+    alert("Кіру қажет");
+  }
+});
+
+function applyLanguage() {
+  const t = texts[currentLang];
+  document.getElementById("homeBtn").textContent = t.home;
+  document.getElementById("formTitle").textContent = t.title;
+  document.querySelector("label[for='testTitle']").textContent = t.testName;
+  document.querySelector(".add-btn").textContent = t.addQuestion;
+  document.querySelector(".submit-btn").textContent = t.submit;
+
+  document.getElementById("languageSelect").value = currentLang;
+  loadTests();
+}
+
+document.getElementById("languageSelect").addEventListener("change", function () {
+  currentLang = this.value;
+  localStorage.setItem('lang', currentLang);
+  applyLanguage();
+});
+
+applyLanguage();
+
+
+  </script>
+</body>
+</html>
