@@ -10,14 +10,9 @@
     body { font-family: Arial, sans-serif; background: #f3f3f3; padding: 20px; }
     h1 { text-align: center; color: #333; }
     form, .question-block, .test-card {
-  position: relative;
-  z-index: 10;
-  margin-bottom: 20px;
-}
-#testList {
-  position: relative;
-  z-index: 10;
-  margin-top: 40px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  margin-top: 20px; /* Мысалы үшін */
 }
 
     label { display: block; margin-top: 10px; font-weight: bold; }
@@ -195,12 +190,11 @@
         }
 
         .image-container {
-  max-width: 55%;
-  /* margin-top: -660px; */ /* Удалите или закомментируйте */
-  float: right;
-  margin-right: 100px;
-}
-
+            max-width: 55%;
+            margin-top: -660px;
+            float: right;
+            margin-right: 100px; /* уменьшает расстояние от правого края */
+        }
 
         .image-container img {
             width: 100%;
