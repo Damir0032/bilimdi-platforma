@@ -63,3 +63,4 @@ urllib3==1.26.18
 whitenoise==6.6.0
 yarl==1.9.2
 pyrebase4==4.5.0
+requests_toolbelt==0.9.1

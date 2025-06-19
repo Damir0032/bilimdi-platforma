@@ -143,7 +143,7 @@ USE_TZ = True
 import os
 
 DEBUG = False
-ALLOWED_HOSTS = ['*']  
+ALLOWED_HOSTS = ['web-production-ea438.up.railway.app']
 
 STATIC_URL = '/static/'
 
